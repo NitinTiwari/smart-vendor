@@ -20,6 +20,7 @@ def add_tools(a: int, b: int) -> int:
 
 def get_agent_tools() -> list:
     """Build the internal, web-search, and arithmetic tools for the agent."""
+    print("get_agent_tools..")
     # Wrap the RAG async function into a LlamaIndex Tool
     rag_tool = FunctionTool.from_defaults(async_fn=query_internal_vendor_data)
     
