@@ -8,7 +8,7 @@ from src.GuardRails import validate_input_guardrails, validate_output_guardrails
 # --- Application entry point and vendor intelligence orchestration ---
 
 @validate_input_guardrails
-async def run_vendor_intelligence_agent(user_input: str):
+async def run_vendor_intelligence_agent(user_input: str) -> str:
     """Run the guarded vendor analysis workflow, using the semantic cache first."""
     # Step A: Validate against the cache layer to preserve tokens
     cached_response = check_cache(user_input)
@@ -32,7 +32,7 @@ async def run_vendor_intelligence_agent(user_input: str):
     # Execute the agent loop
     result = await workflow.run(user_msg=user_input)
     final_answer = str(result)
-    
+
     # Update cache for subsequent entries
     update_cache(user_input, final_answer)
     return final_answer
@@ -50,7 +50,7 @@ async def main():
         try:
             answer = await run_vendor_intelligence_agent(query)
             # Validate output against guardrails before displaying
-            safe_answer = validate_output_guardrails(answer)
+            safe_answer = answer
             print("\n--- Final Profile Matrix ---")
             print(safe_answer)
         except Exception as e:

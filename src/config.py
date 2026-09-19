@@ -24,7 +24,7 @@ PINECONE_CACHE_NAMESPACE = os.getenv(
 
 # Model and service behavior settings.
 GROQ_MODEL = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "")
 GROQ_MAX_TOKENS = int(os.getenv("GROQ_MAX_TOKENS", "1000"))
 CACHE_SIMILARITY_THRESHOLD = float(
     os.getenv("CACHE_SIMILARITY_THRESHOLD", "0.90")
