@@ -8,7 +8,7 @@ from src.GuardRails import validate_input_guardrails, validate_output_guardrails
 # --- Application entry point and vendor intelligence orchestration ---
 
 @validate_input_guardrails
-async def run_vendor_intelligence_agent(user_input: str):
+async def run_vendor_intelligence_agent(user_input: str) -> str:
     """Run the guarded vendor analysis workflow, using the semantic cache first."""
     # Step A: Validate against the cache layer to preserve tokens
     cached_response = check_cache(user_input)
