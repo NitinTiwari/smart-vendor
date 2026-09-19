@@ -1,21 +1,25 @@
-import os
 from pinecone import Pinecone
 from llama_index.core import Settings
+from src.config import (
+    CACHE_SIMILARITY_THRESHOLD,
+    PINECONE_API_KEY,
+    PINECONE_CACHE_NAMESPACE,
+    PINECONE_INDEX_NAME,
+)
 
-# Fetch the global properties
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "smart-vendor")
-CACHE_NAMESPACE = os.getenv("PINECONE_CACHE_NAMESPACE", "smart-vendor-cache")
+# --- Semantic cache: Pinecone-backed query and response storage ---
 
-# Minimum similarity threshold to determine a cache hit (0.90 = highly identical)
-SIMILARITY_THRESHOLD = 0.90
+CACHE_NAMESPACE = PINECONE_CACHE_NAMESPACE
+
 
 def get_cache_client():
+    """Create and return a Pinecone index client for the semantic cache."""
     pc = Pinecone(api_key=PINECONE_API_KEY)
     return pc.Index(PINECONE_INDEX_NAME)
 
+
 def check_cache(query: str) -> str | None:
-    """Computes the embedding of the query and looks for a semantic hit in Pinecone."""
+    """Find a sufficiently similar cached response for a vendor query."""
     index = get_cache_client()
     
     # Generate the query embedding vector using your default BGE model
@@ -32,14 +36,15 @@ def check_cache(query: str) -> str | None:
     # Check if a close semantic result was found
     if response.get("matches"):
         match = response["matches"][0]
-        if match["score"] >= SIMILARITY_THRESHOLD:
+        if match["score"] >= CACHE_SIMILARITY_THRESHOLD:
             print(f"🎯 [SEMANTIC CACHE HIT] Match Score: {match['score']:.4f}")
             return match["metadata"]["response_text"]
             
     return None
 
+
 def update_cache(query: str, response: str):
-    """Saves the query vector and text answer to Pinecone for future checks."""
+    """Store a query embedding and its response in the configured cache namespace."""
     index = get_cache_client()
     
     # Generate the embedding vector
@@ -63,3 +68,6 @@ def update_cache(query: str, response: str):
         namespace=CACHE_NAMESPACE
     )
     print("💾 Saved response structure into Pinecone semantic cache.")
+
+
+# --- End semantic cache operations ---

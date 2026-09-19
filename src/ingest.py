@@ -8,8 +8,10 @@ from pinecone import Pinecone
 from src.config import PINECONE_API_KEY, PINECONE_INDEX_NAME, init_settings
 from src.database import get_pinecone_index
 
+# --- Ingestion: create sample vendor documents and upload their embeddings ---
+
 def generate_sample_vendor_data() -> list[Document]:
-    """Generates mock corporate vendor records to simulate file parsing (PDF/CSV)."""
+    """Generate mock vendor records that simulate parsed PDF or CSV documents."""
     print("Generating mock vendor profiles and compliance histories...")
     
     samples = [
@@ -41,6 +43,7 @@ def generate_sample_vendor_data() -> list[Document]:
     return samples
 
 async def upload_documents_to_pinecone():
+    """Initialize configured services and upload sample records to Pinecone."""
     # 1. Initialize Groq/Embedding configurations
     init_settings()
     
@@ -65,3 +68,6 @@ async def upload_documents_to_pinecone():
 if __name__ == "__main__":
     # Run the ingestion pipeline
     asyncio.run(upload_documents_to_pinecone())
+
+
+# --- End ingestion pipeline ---

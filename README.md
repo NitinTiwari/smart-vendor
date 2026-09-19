@@ -186,6 +186,21 @@ SYSTEM_SECRET_KEY=SUPER_SECRET_COMPOSITE_KEY_123
 - `PINECONE_CACHE_NAMESPACE` — namespace used for the semantic cache
 - `SYSTEM_SECRET_KEY` — secret used by the output guardrail to block accidental leakage
 
+`src/config.py` is the only application module that reads `.env`. All other modules
+import their credentials, model names, and runtime settings from `src.config`.
+Optional settings use the current values below when they are omitted from `.env`:
+
+```env
+GROQ_MODEL=qwen/qwen3.8-27b
+EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
+GROQ_MAX_TOKENS=1000
+CACHE_SIMILARITY_THRESHOLD=0.90
+PINECONE_DIMENSION=384
+PINECONE_CLOUD=aws
+PINECONE_REGION=us-east-1
+SYSTEM_SECRET_FRAGMENT=COMPOSITE_KEY_123
+```
+
 > Important: keep API keys out of source control. Do not commit the `.env` file to Git.
 
 ---

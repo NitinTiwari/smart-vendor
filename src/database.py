@@ -1,10 +1,20 @@
 from pinecone import Pinecone, ServerlessSpec
 from llama_index.vector_stores.pinecone import PineconeVectorStore
 from llama_index.core import VectorStoreIndex, StorageContext
-from src.config import PINECONE_API_KEY, PINECONE_INDEX_NAME
+from src.config import (
+    PINECONE_API_KEY,
+    PINECONE_CLOUD,
+    PINECONE_DIMENSION,
+    PINECONE_INDEX_NAME,
+    PINECONE_REGION,
+)
+
+
+# --- Database: Pinecone vector index creation and access ---
+
 
 def get_pinecone_index():
-    """Get or create the Pinecone index for vector storage."""
+    """Get or create the configured Pinecone index used for vendor retrieval."""
     pc = Pinecone(api_key=PINECONE_API_KEY)
     
     # 1. Initialize or create the underlying Pinecone infrastructure
@@ -12,9 +22,9 @@ def get_pinecone_index():
         # Create a brand new index if it doesn't exist
         pc.create_index(
             name=PINECONE_INDEX_NAME, 
-            dimension=384, 
+            dimension=PINECONE_DIMENSION,
             metric="cosine", 
-            spec=ServerlessSpec(cloud="aws", region="us-east-1")
+            spec=ServerlessSpec(cloud=PINECONE_CLOUD, region=PINECONE_REGION)
         )
     
     # 2. Connect to the Pinecone index (runs whether index is new or existing)
@@ -34,3 +44,6 @@ def get_pinecone_index():
         index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
         
     return index
+
+
+    # --- End Pinecone database operations ---

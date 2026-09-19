@@ -3,9 +3,10 @@ from llama_index.tools.tavily_research.base import TavilyToolSpec
 from src.database import get_pinecone_index
 from src.config import TAVILY_API_KEY
 
-# 1. Internal Documents Search Tool (Pinecone RAG)
+# --- Agent tools: internal vendor retrieval, web research, and utilities ---
+
 async def query_internal_vendor_data(query_str: str) -> str:
-    """Searches private enterprise databases for historical supplier profiles, performance reviews, and contract data."""
+    """Search private vendor records for supplier history and contract evidence."""
     index = get_pinecone_index()
     query_engine = index.as_query_engine(similarity_top_k=3)
     response = query_engine.query(query_str)
@@ -13,12 +14,12 @@ async def query_internal_vendor_data(query_str: str) -> str:
     return str(response)
 
 def add_tools(a: int, b: int) -> int:
-    """Simple addition tool for demonstration purposes."""
+    """Return the sum of two integers for agent tool demonstrations."""
     print(f"Adding {a} and {b} together.")
     return a + b
 
 def get_agent_tools() -> list:
-    """Builds and lists out tools ready for the ReAct Agent."""
+    """Build the internal, web-search, and arithmetic tools for the agent."""
     # Wrap the RAG async function into a LlamaIndex Tool
     rag_tool = FunctionTool.from_defaults(async_fn=query_internal_vendor_data)
     
@@ -29,3 +30,6 @@ def get_agent_tools() -> list:
     add_tool= FunctionTool.from_defaults(fn=add_tools, name="add_numbers", description="Adds two numbers together.")
     
     return [rag_tool] + web_tools + [add_tool]
+
+
+# --- End agent tool definitions ---

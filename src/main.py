@@ -5,8 +5,11 @@ from src.tools import get_agent_tools
 from llama_index.core.agent.workflow import AgentWorkflow, ReActAgent
 from src.GuardRails import validate_input_guardrails, validate_output_guardrails
 
+# --- Application entry point and vendor intelligence orchestration ---
+
 @validate_input_guardrails
 async def run_vendor_intelligence_agent(user_input: str):
+    """Run the guarded vendor analysis workflow, using the semantic cache first."""
     # Step A: Validate against the cache layer to preserve tokens
     cached_response = check_cache(user_input)
     if cached_response:
@@ -35,6 +38,7 @@ async def run_vendor_intelligence_agent(user_input: str):
     return final_answer
 
 async def main():
+    """Initialize services and run the interactive vendor-risk CLI loop."""
     init_settings()
     print("--- Smart-Vendor Market Intelligence System Activated ---")
     
@@ -54,3 +58,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+
+# --- End application entry point ---

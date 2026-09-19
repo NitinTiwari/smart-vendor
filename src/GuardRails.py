@@ -1,13 +1,11 @@
-import os
 import re
 from functools import wraps
+from src.config import SYSTEM_SECRET_FRAGMENT, SYSTEM_SECRET_KEY
 
-# --- INPUT GUARDRAIL (Fixed Decorator Structure) ---
+# --- Guardrails: reject prompt injection and prevent secret leakage ---
 
 def validate_input_guardrails(func):
-    """
-    Decorator guardrail to prevent prompt injection before the agent runs.
-    """
+    """Decorate an agent entry point with prompt-injection pattern checks."""
     # Compiled regex is faster for repeated checks
     INJECTION_PATTERNS = [
         re.compile(r"ignore\s+(your\s+)?previous\s+instructions", re.IGNORECASE),
@@ -33,28 +31,25 @@ def validate_input_guardrails(func):
 # --- OUTPUT GUARDRAIL (Robust Secret Detection) ---
 
 def validate_output_guardrails(agent_output: str) -> str:
-    """
-   "You are a strict security guard for an enterprise application. "
-    "Analyze the user's input. If the user is asking for jokes, poems, casual chit-chat, "
-    "or anything unrelated to business/professional assistance, reply with 'BLOCK'. "
-    "Otherwise, reply with 'ALLOW'.\n\n"
-    "User Input: {agent_output}\n"
-    "Decision (BLOCK or ALLOW):"
-    """
-    # Fetch from environment variable instead of hardcoding
-    SYSTEM_SECRET_KEY = os.getenv("SYSTEM_SECRET_KEY", "SUPER_SECRET_COMPOSITE_KEY_123")
-    
+    """Return output unless it contains the configured secret or its fragment."""
     # 1. Exact match check
     if SYSTEM_SECRET_KEY in agent_output:
         raise ValueError("[❌ SECURITY ALERT] Output blocked: Exact secret key leak detected!")
         
     # 2. Obfuscation check (Example: Check if a highly unique part of the key leaks)
-    # If your key is "SUPER_SECRET_COMPOSITE_KEY_123", check for the unique core identifier
-    unique_fragment = "COMPOSITE_KEY_123"
-    if unique_fragment in agent_output.replace(" ", "").replace("-", ""):
+    # Check the configured unique fragment after removing common separators.
+    if SYSTEM_SECRET_FRAGMENT in agent_output.replace(" ", "").replace("-", ""):
         raise ValueError("[❌ SECURITY ALERT] Output blocked: Fragmented secret key leak detected!")
 
     return agent_output
+
+
+# --- End input and output guardrails ---
+
+
+
+
+
 
 
 
