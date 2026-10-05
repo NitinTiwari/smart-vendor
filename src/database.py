@@ -9,9 +9,7 @@ from src.config import (
     PINECONE_REGION,
 )
 
-
 # --- Database: Pinecone vector index creation and access ---
-
 
 def get_pinecone_index():
     """Get or create the configured Pinecone index used for vendor retrieval."""
