@@ -1,3 +1,11 @@
+import sys
+from pathlib import Path
+
+# Ensure the project root (parent of src) is on PYTHONPATH
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.append(str(PROJECT_ROOT))
+
 import asyncio
 from src.config import init_settings
 from src.cache import check_cache, update_cache

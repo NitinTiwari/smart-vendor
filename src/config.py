@@ -1,12 +1,10 @@
 # --- Central application configuration ---
-
 import os
 
 from dotenv import load_dotenv
 from llama_index.core import Settings
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.groq import Groq
-
 
 # Load the local environment once. Other modules must import values from this file.
 load_dotenv()
